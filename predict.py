@@ -60,10 +60,9 @@ def load_or_build():
             return lbf
     return build()
 
-
 def show(lbf, url):
-    label, s, why = classify(lbf, url)
-    print(f"  -> {label}  (score {s:.3f}; {why})")
+       label, s, why = classify(lbf, url)
+       print(f"  -> {label}  (score {s:.3f}; alert level {lbf.alert_tau:.3f}; {why})")
 
 
 if __name__ == "__main__":

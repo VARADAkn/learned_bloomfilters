@@ -2,19 +2,32 @@ import pickle
 import time
 
 import numpy as np
+from scipy.sparse import hstack
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
 
-N_FEATURES = 2 ** 12
+
+class UrlVectorizer:
+    """Character n-grams + word tokens, both hashed (stateless, nothing to fit)."""
+
+    def __init__(self, n_char=2 ** 12, n_word=2 ** 10):
+        self.char = HashingVectorizer(analyzer="char", ngram_range=(2, 4),
+                                      n_features=n_char, alternate_sign=False,
+                                      norm="l2")
+        self.word = HashingVectorizer(analyzer="word", token_pattern=r"[A-Za-z0-9]+",
+                                      ngram_range=(1, 2), n_features=n_word,
+                                      alternate_sign=False, norm="l2")
+
+    def transform(self, urls):
+        urls = [u.lower() for u in urls]
+        return hstack([self.char.transform(urls), self.word.transform(urls)]).tocsr()
 
 
-def make_vectorizer(n_features=N_FEATURES):
-    return HashingVectorizer(analyzer="char", ngram_range=(2, 4),
-                             n_features=n_features, alternate_sign=False,
-                             norm="l2")
+def make_vectorizer():
+    return UrlVectorizer()
 
 
 def make_classifier(name, seed=0):

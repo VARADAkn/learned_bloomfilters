@@ -166,7 +166,7 @@ if __name__ == "__main__":
     else:
         args.sizes = dict(n_keys=30000, n_train=30000, n_val=30000, n_test=50000)
         seeds = [0, 1, 2]
-        args.budgets = [6, 8, 10, 12, 15]
+        args.budgets = [8, 10, 12, 15, 20]
         args.fixed_bpk = 12
         args.exp2_budgets = [12, 20]
 
