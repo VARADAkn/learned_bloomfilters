@@ -8,7 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
 
-N_FEATURES = 2 ** 10
+N_FEATURES = 2 ** 12
 
 
 def make_vectorizer(n_features=N_FEATURES):

@@ -1,0 +1,7 @@
+seed,filter,setting,fpr,false_neg,query_us,memory_bits
+0,Standard,same distribution,0.00145,0,2.592200000071898,140000
+0,Standard,shifted distribution,0.00112,0,2.974645998328924,140000
+0,LBF,same distribution,0.00145,0,98.0109550000634,140000
+0,LBF,shifted distribution,0.00062,0,110.79215799923986,140000
+0,PLBF,same distribution,0.0001,0,68.59473999938928,139998
+0,PLBF,shifted distribution,0.00018,0,114.02660599909723,139998

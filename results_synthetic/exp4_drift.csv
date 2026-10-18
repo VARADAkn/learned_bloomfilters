@@ -1,0 +1,19 @@
+seed,filter,setting,fpr,false_neg,query_us,memory_bits
+0,Standard,same distribution,0.00314,0,3.3854539995081723,360000
+0,Standard,shifted distribution,0.00346,0,3.0209159990772605,360000
+0,LBF,same distribution,0.0001,0,142.27892399998382,360000
+0,LBF,shifted distribution,0.00134,0,79.64636799879372,360000
+0,PLBF,same distribution,2e-05,0,50.57838800130412,359999
+0,PLBF,shifted distribution,0.0001,0,51.16013000020757,359999
+1,Standard,same distribution,0.00354,0,1.663696002215147,360000
+1,Standard,shifted distribution,0.00352,0,1.6437860019505024,360000
+1,LBF,same distribution,8e-05,0,46.55969799961895,360000
+1,LBF,shifted distribution,0.0019,0,49.556535999290645,360000
+1,PLBF,same distribution,0.0,0,61.55210600001738,359997
+1,PLBF,shifted distribution,2e-05,0,51.89883999992162,359997
+2,Standard,same distribution,0.0027,0,1.9523599999956787,360000
+2,Standard,shifted distribution,0.00344,0,1.7619280004873872,360000
+2,LBF,same distribution,0.0002,0,57.72024600068107,360000
+2,LBF,shifted distribution,0.00262,0,83.36091000121087,360000
+2,PLBF,same distribution,0.0,0,74.02152599999681,359997
+2,PLBF,shifted distribution,6e-05,0,52.959833999630064,359997
