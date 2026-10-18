@@ -43,6 +43,7 @@ def build():
     false_alarms = np.mean([classify(lbf, u)[0] == "UNSAFE" for u in d["test_neg"][:5000]])
     print(f"Trained in {secs:.1f}s")
     print(f"Main threshold {lbf.tau:.4f} | alert threshold {lbf.alert_tau:.4f}")
+    print(f"Keys stored in the backup filter: {lbf.n_backup_keys} of {len(d['keys'])}")
     print(f"Malicious URLs wrongly called SAFE (out of 2000 checked): {missed} (must be 0)")
     print(f"Safe URLs wrongly called UNSAFE (false alarm rate): {false_alarms:.2%}")
 
@@ -60,9 +61,10 @@ def load_or_build():
             return lbf
     return build()
 
+
 def show(lbf, url):
-       label, s, why = classify(lbf, url)
-       print(f"  -> {label}  (score {s:.3f}; alert level {lbf.alert_tau:.3f}; {why})")
+    label, s, why = classify(lbf, url)
+    print(f"  -> {label}  (score {s:.3f}; alert level {lbf.alert_tau:.3f}; {why})")
 
 
 if __name__ == "__main__":
