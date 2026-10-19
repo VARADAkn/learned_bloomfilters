@@ -1,4 +1,5 @@
 import pickle
+import re
 import time
 
 import numpy as np
@@ -8,6 +9,9 @@ from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
+
+# remove "http://", "https://" and "www." so the model cannot use them as a shortcut
+_PREFIX = re.compile(r"^(?:https?://)?(?:www\.)?")
 
 
 class UrlVectorizer:
@@ -22,7 +26,7 @@ class UrlVectorizer:
                                       alternate_sign=False, norm="l2")
 
     def transform(self, urls):
-        urls = [u.lower() for u in urls]
+        urls = [_PREFIX.sub("", u.strip().lower()) for u in urls]
         return hstack([self.char.transform(urls), self.word.transform(urls)]).tocsr()
 
 

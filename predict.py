@@ -1,5 +1,6 @@
 import os
 import pickle
+import re
 import sys
 
 import numpy as np
@@ -9,12 +10,21 @@ from features import make_vectorizer, train_classifier, score
 from lbf import LearnedBF
 
 MODEL_FILE = "results/lbf_model.pkl"
+MODEL_VERSION = 2      # raise this number whenever features.py or the settings change
 BITS_PER_KEY = 12      # memory budget of the filter
 ALERT_FPR = 0.05       # about 5% of safe URLs may be flagged UNSAFE (raise it to catch more)
 
 
+def clean_url(u):
+    """Turn '[text](link)' (copied from a chat) into plain 'text'."""
+    u = u.strip()
+    m = re.match(r"^\[(.+?)\]\((.+?)\)$", u)
+    return (m.group(1) if m else u).strip()
+
+
 def classify(lbf, url):
     """Returns ('SAFE' or 'UNSAFE', score, reason)."""
+    url = clean_url(url)
     s = float(score(lbf.clf, lbf.vec, [url])[0])
     if s >= lbf.tau:
         return "UNSAFE", s, "classifier is very confident"
@@ -37,6 +47,7 @@ def build():
     # alert threshold: flag the top ALERT_FPR share of safe validation URLs
     vs = score(lbf.clf, lbf.vec, d["val_neg"])
     lbf.alert_tau = float(np.quantile(vs, 1 - ALERT_FPR))
+    lbf.version = MODEL_VERSION
 
     # quality report
     missed = sum(classify(lbf, u)[0] == "SAFE" for u in d["keys"][:2000])
@@ -57,8 +68,9 @@ def load_or_build():
     if os.path.exists(MODEL_FILE):
         with open(MODEL_FILE, "rb") as f:
             lbf = pickle.load(f)
-        if hasattr(lbf, "alert_tau"):       # old saved model without alert level -> rebuild
+        if getattr(lbf, "version", None) == MODEL_VERSION:   # old or stale model -> rebuild
             return lbf
+        print("Saved model is outdated, rebuilding...")
     return build()
 
 
@@ -72,7 +84,7 @@ if __name__ == "__main__":
     urls = sys.argv[1:]
     if urls:
         for u in urls:
-            print(u)
+            print(clean_url(u))
             show(lbf, u)
     else:
         print("\nType a URL and press Enter (empty line to quit).")
