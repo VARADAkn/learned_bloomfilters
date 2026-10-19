@@ -75,11 +75,21 @@ def synthetic_dataset(n_keys=30000, n_train=30000, n_val=30000, n_test=50000,
     return dict(keys=keys, train_neg=train, val_neg=val, test_neg=test, shift_neg=shift)
 
 
+def _host_only(u):
+    """'https://www.site.com/a/b?x=1' -> 'www.site.com'"""
+    u = u.strip()
+    for p in ("https://", "http://"):
+        if u.lower().startswith(p):
+            u = u[len(p):]
+    return u.split("/")[0].split("?")[0]
+
+
 def kaggle_dataset(path="data/malicious_phish.csv", n_keys=30000, n_train=30000,
                    n_val=30000, n_test=50000, seed=0):
     """Kaggle 'Malicious URLs dataset': CSV with columns url,type (type=='benign' is safe)."""
     import pandas as pd
-    df = pd.read_csv(path).drop_duplicates("url")
+    df = pd.read_csv(path).dropna(subset=["url"]).drop_duplicates("url")
+    df["url"] = df["url"].astype(str)
     mal = df[df["type"] != "benign"]["url"].sample(frac=1, random_state=seed).tolist()
     ben = df[df["type"] == "benign"]["url"].sample(frac=1, random_state=seed).tolist()
     keys = mal[:n_keys]
@@ -88,6 +98,12 @@ def kaggle_dataset(path="data/malicious_phish.csv", n_keys=30000, n_train=30000,
     ben = [u for u in ben if u not in keyset]
     train, val = ben[:n_train], ben[n_train:n_train + n_val]
     test = ben[n_train + n_val:need]
+
+    # Remove the "has a path => safe" shortcut: 99.9% of safe URLs in this dataset
+    # have a path, so add path-less versions of safe training URLs.
+    hosts = sorted({_host_only(u) for u in train[: int(0.5 * n_train)]})
+    train = train + [h for h in hosts if h and h not in keyset]
+
     rest = sorted(ben[need:], key=len)              # drift proxy: unusually long benign URLs
     shift = rest[int(0.75 * len(rest)):][:50000]
     return dict(keys=keys, train_neg=train, val_neg=val, test_neg=test, shift_neg=shift)

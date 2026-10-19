@@ -10,7 +10,7 @@ from features import make_vectorizer, train_classifier, score
 from lbf import LearnedBF
 
 MODEL_FILE = "results/lbf_model.pkl"
-MODEL_VERSION = 2      # raise this number whenever features.py or the settings change
+MODEL_VERSION = 3     # raise this number whenever features.py or the settings change
 BITS_PER_KEY = 12      # memory budget of the filter
 ALERT_FPR = 0.05       # about 5% of safe URLs may be flagged UNSAFE (raise it to catch more)
 
